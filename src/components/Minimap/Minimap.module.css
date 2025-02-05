@@ -4,7 +4,7 @@
   background-color: aliceblue;
   border: solid 2px black;
   border-radius: 1rem;
-  position: absolute;
+  position: fixed;
   top: 1rem;
-  left: 1rem;
+  right: 1rem;
 }
