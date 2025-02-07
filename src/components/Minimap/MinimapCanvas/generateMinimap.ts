@@ -1,5 +1,7 @@
 import html2canvas from "html2canvas";
 import { Options } from "html2canvas";
+
+
 /**
  * Returns image of element passed in.
  *
@@ -10,16 +12,30 @@ export default async function generateMinimapCanvas(
   elementToRender: HTMLElement,
   renderOptions: Partial<Options> = {}
 ): Promise<HTMLCanvasElement> {
-  const options: Partial<Options>= {
+
+  const options: Partial<Options> = {
     ...renderOptions,
     scrollX: 0,
     scrollY: 0,
     scale: 0.2,
-    onclone: removeAllImages,
-    
-  }
-  return html2canvas(elementToRender, options);
+    onclone(document: Document, element: HTMLElement) {
+      removeOverflowRestriction(element)
+      removeAllImages(document);
+    },
+  };
+
+  // Generate the canvas
+  const canvas = await html2canvas(elementToRender, options);
+  return canvas;
 }
+
+
+function removeOverflowRestriction(element: HTMLElement) {
+  // Set the element to show its full height
+  element.style.height = "auto";
+  element.style.overflow = "visible";
+}
+
 
 function removeAllImages(documentClone: Document) {
   documentClone.querySelectorAll("img").forEach(img => {
