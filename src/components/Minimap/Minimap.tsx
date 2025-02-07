@@ -1,7 +1,15 @@
 import { useState } from "react";
 import styles from "./Minimap.module.css"
+import MinimapCanvas from "./MinimapCanvas/MinimapCanvas";
 
-const Minimap = () => {
+const Minimap = (
+  {
+    elementToMap
+  } :
+  {
+    elementToMap: HTMLElement | null
+  }
+) => {
   const [show, setShow] = useState(true)
 
   const showMinimap = () => setShow(true)
@@ -18,7 +26,10 @@ const Minimap = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div 
+      id="minimap-component"
+      className={styles.container}>
+      <MinimapCanvas elementToMap={elementToMap}/>
       <div className={styles.options}>
         <button onClick={hideMinimap}>close</button>
         <button>option</button>

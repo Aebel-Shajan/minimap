@@ -13,13 +13,21 @@ const RandomColor = ({height=100}) => {
   )
 }
 
+import { useEffect, useState } from "react";
+
 const Home = () => {
+  const [elementToMap, setElementToMap] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setElementToMap(document.querySelector("#scroll-container") as HTMLElement);
+  }, []);
+
   const randomColors = 
   Array.from({ length: 5 }, (_, index) => <RandomColor key={index} />)
   return (
-    <div>
+    <div id="scroll-container">
       {randomColors}
-      <Minimap />
+      {elementToMap && <Minimap elementToMap={elementToMap}/>}
     </div>
   );
 }
