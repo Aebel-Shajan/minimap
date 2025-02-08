@@ -20,6 +20,18 @@ const Minimap = (
   const showMinimap = () => setShow(true)
   const hideMinimap = () => setShow(false)
 
+  // Function which handles drag scrolling of the slider.
+  function handleSliderDrag(mouseY: number) {
+    const minimap = minimapRef.current;
+    if (!minimap || !elementToMap) return;
+
+    const minimapRect = minimap.getBoundingClientRect();
+    const relativeMousePos = mouseY - minimapRect.top;
+    const newScrollPos = (relativeMousePos + minimap.scrollTop) / mapScale - 0.5 * elementToMap.offsetHeight;
+
+    elementToMap.scrollTo(0, newScrollPos);
+  }
+
   useEffect(() => {
     if (!elementToMap) return
     const minimap = minimapRef.current;
@@ -69,6 +81,7 @@ const Minimap = (
         {elementToMap && <Slider
           sliderHeight={sliderHeight}
           scrollTop={sliderTop}
+          handleDrag={handleSliderDrag}
         />}
       </div>
       <div className={styles.options}>
