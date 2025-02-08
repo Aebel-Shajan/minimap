@@ -5,10 +5,12 @@ import generateMinimapCanvas from "./generateMinimap";
 
 const MinimapCanvas = (
   {
-    elementToMap
+    elementToMap,
+    setMapScale
   } : 
   {
-    elementToMap: HTMLElement | null
+    elementToMap: HTMLElement | null,
+    setMapScale: CallableFunction
   }
 ) => {
   log("MinimapCanvas was rendered")
@@ -47,10 +49,10 @@ const MinimapCanvas = (
       const scale = container.clientWidth / canvas.offsetWidth;
       canvas.style.width = `${container.clientWidth}px`;
       canvas.style.height = `${scale * canvas.clientHeight}px`;
-
+      setMapScale(scale)
     })();
 
-  }, [containerRef, elementToMap])
+  }, [containerRef, elementToMap, setMapScale])
 
 
 
