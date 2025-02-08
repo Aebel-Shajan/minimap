@@ -6,11 +6,13 @@ import generateMinimapCanvas from "./generateMinimap";
 const MinimapCanvas = (
   {
     elementToMap,
-    setMapScale
+    setMapScale,
+    setCanvasLoading
   } : 
   {
     elementToMap: HTMLElement | null,
-    setMapScale: CallableFunction
+    setMapScale: CallableFunction,
+    setCanvasLoading: CallableFunction
   }
 ) => {
   log("MinimapCanvas was rendered")
@@ -32,7 +34,7 @@ const MinimapCanvas = (
     if (clonedMinimap) {
       clonedMinimap.remove()
     }
-    
+    setCanvasLoading(true);
     (async () => {
       log("Canvas drawn")
       const canvas = await generateMinimapCanvas(
@@ -50,6 +52,7 @@ const MinimapCanvas = (
       canvas.style.width = `${container.clientWidth}px`;
       canvas.style.height = `${scale * canvas.clientHeight}px`;
       setMapScale(scale)
+      setCanvasLoading(false)
     })();
 
   }, [containerRef, elementToMap, setMapScale])

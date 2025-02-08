@@ -15,6 +15,7 @@ const Minimap = (
   const [mapScale, setMapScale] = useState(1)
   const [sliderHeight, setSliderHeight] = useState(100)
   const [sliderTop, setSliderTop] = useState(0)
+  const [canvasLoading, setCanvasLoading] = useState(false)
   const minimapRef = useRef<HTMLDivElement>(null);
 
   const showMinimap = () => setShow(true)
@@ -32,6 +33,7 @@ const Minimap = (
     elementToMap.scrollTo(0, newScrollPos);
   }
 
+  // Add event listeners to listen to scroll events of elementToMap
   useEffect(() => {
     if (!elementToMap) return
     const minimap = minimapRef.current;
@@ -46,12 +48,12 @@ const Minimap = (
       setSliderTop(newSliderTop);
       minimap.scrollTop = newSliderTop - (scrollPercentage * (minimap.clientHeight - (mapScale * elementToMap.offsetHeight)))
     };
-
+    syncScroll()
     elementToMap.addEventListener("scroll", syncScroll);
     return () => {
       elementToMap.removeEventListener("scroll", syncScroll);
     };
-  }, [show, mapScale, elementToMap])
+  }, [canvasLoading, show, elementToMap])
 
   useEffect(() => {
     if (!elementToMap) return
@@ -77,6 +79,7 @@ const Minimap = (
         <MinimapCanvas
           elementToMap={elementToMap}
           setMapScale={setMapScale}
+          setCanvasLoading={setCanvasLoading}
         />
         {elementToMap && <Slider
           sliderHeight={sliderHeight}
@@ -93,3 +96,4 @@ const Minimap = (
 }
 
 export default Minimap;
+
