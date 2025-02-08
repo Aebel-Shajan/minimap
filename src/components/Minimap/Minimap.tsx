@@ -6,10 +6,10 @@ import MinimapCanvas from "./MinimapCanvas/MinimapCanvas";
 const Minimap = (
   {
     elementToMap
-  } :
-  {
-    elementToMap: HTMLElement | null
-  }
+  }:
+    {
+      elementToMap: HTMLElement | null
+    }
 ) => {
   const [show, setShow] = useState(true)
   const [mapScale, setMapScale] = useState(1)
@@ -43,15 +43,22 @@ const Minimap = (
 
     // Create function which syncs the slider and minimap scroll to the elementToMap's scroll
     const syncScroll = () => {
-      const scrollPercentage = elementToMap.scrollTop/ elementToMap.scrollHeight; 
+      const scrollPercentage = elementToMap.scrollTop / elementToMap.scrollHeight;
       const newSliderTop = (scrollPercentage * elementToMap.scrollHeight) * mapScale;
       setSliderTop(newSliderTop);
       minimap.scrollTop = newSliderTop - (scrollPercentage * (minimap.clientHeight - (mapScale * elementToMap.offsetHeight)))
     };
+    const syncMinimapScroll = (event: WheelEvent) => {
+      event.preventDefault(); // Prevents default scrolling behavior
+      elementToMap.scrollTop +=  event.deltaY;
+    }
+
     syncScroll()
     elementToMap.addEventListener("scroll", syncScroll);
+    minimap.addEventListener("wheel", syncMinimapScroll);
     return () => {
       elementToMap.removeEventListener("scroll", syncScroll);
+      minimap.removeEventListener("wheel", syncMinimapScroll)
     };
   }, [canvasLoading, show, elementToMap])
 
@@ -60,16 +67,18 @@ const Minimap = (
     setSliderHeight(mapScale * elementToMap.offsetHeight)
   }, [mapScale, elementToMap])
 
+
+  // JSX 
   if (!show) {
     return (
       <div className={styles.hiddenContainer}>
-          <button onClick={showMinimap}>show</button>
+        <button onClick={showMinimap}>show</button>
       </div>
     )
   }
 
   return (
-    <div 
+    <div
       id="minimap-component"
       className={styles.container}>
       <div
