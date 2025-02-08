@@ -1,4 +1,5 @@
 
-export function log(message: unknown) {
-  console.log(message, "@", new Date().toLocaleTimeString())
+export function log(...data: unknown[]) {
+  console.log(...data, "@", new Date().toLocaleTimeString())
 }
+
