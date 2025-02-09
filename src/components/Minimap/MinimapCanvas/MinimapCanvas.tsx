@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { log } from "../../../utils/utils";
 import styles from "./MinimapCanvas.module.css"
 import generateMinimapCanvas from "./generateMinimap";
@@ -7,16 +7,36 @@ const MinimapCanvas = (
   {
     elementToMap,
     setMapScale,
-    setCanvasLoading
+    setCanvasLoading,
+    queueRedraw,
+    setQueueRedraw
   } : 
   {
     elementToMap: HTMLElement | null,
     setMapScale: CallableFunction,
     setCanvasLoading: CallableFunction
+    queueRedraw: boolean,
+    setQueueRedraw: CallableFunction
   }
 ) => {
-  log("MinimapCanvas was rendered")
+  // log("MinimapCanvas was rendered")
   const containerRef = useRef<HTMLDivElement>(null);
+  const [period, setPeriod] = useState<boolean>(false);
+  const [refreshState, setRefreshState] = useState<boolean>(false);
+
+  useEffect(() => {
+    const refreshPeriod = 2 * 1000
+    setInterval(() => {
+      setPeriod((old:boolean)=> !old)
+    }, refreshPeriod)
+  }, [])
+
+  useEffect(() => {
+    if (queueRedraw) {
+      setQueueRedraw(false)
+      setRefreshState(old => !old)
+    }
+  }, [period])
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -55,7 +75,7 @@ const MinimapCanvas = (
       setCanvasLoading(false)
     })();
 
-  }, [containerRef, elementToMap, setMapScale])
+  }, [containerRef, elementToMap, refreshState])
 
 
 

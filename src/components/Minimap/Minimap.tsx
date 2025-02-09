@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./Minimap.module.css"
 import Slider from "./Slider/Slider";
 import MinimapCanvas from "./MinimapCanvas/MinimapCanvas";
+import { log } from "../../utils/utils";
 
 const Minimap = (
   {
@@ -16,6 +17,8 @@ const Minimap = (
   const [sliderHeight, setSliderHeight] = useState(100)
   const [sliderTop, setSliderTop] = useState(0)
   const [canvasLoading, setCanvasLoading] = useState(false)
+  const [queueRedraw, setQueueRedraw] = useState(false)
+
   const minimapRef = useRef<HTMLDivElement>(null);
 
   const showMinimap = () => setShow(true)
@@ -32,6 +35,18 @@ const Minimap = (
 
     elementToMap.scrollTo(0, newScrollPos);
   }
+
+  // Add observers to look for changes in elementToMap and queue a redraw
+  useEffect(() => {
+    if (!elementToMap) return
+    const childObserver = createChildObserver(elementToMap, () => setQueueRedraw(true))
+    const sizeObserver = createSizeObserver(elementToMap,  () => setQueueRedraw(true))
+    return () => {
+      childObserver.disconnect();
+      sizeObserver.disconnect()
+    };
+  }, [elementToMap])
+
 
   // Add event listeners to listen to scroll events of elementToMap
   useEffect(() => {
@@ -86,6 +101,8 @@ const Minimap = (
         ref={minimapRef}
       >
         <MinimapCanvas
+          queueRedraw={queueRedraw}
+          setQueueRedraw={setQueueRedraw}
           elementToMap={elementToMap}
           setMapScale={setMapScale}
           setCanvasLoading={setCanvasLoading}
@@ -106,3 +123,46 @@ const Minimap = (
 
 export default Minimap;
 
+
+// 🤨
+function createChildObserver(
+  elementToObserve: HTMLElement,
+  callback: CallableFunction
+): MutationObserver {
+  const mutationObserver = new MutationObserver(function(mutations) {
+    const minimapComponent = document.querySelector("#minimap-component")
+    if (!minimapComponent) return
+    mutations.forEach(function(mutation) {
+      const targetElement = mutation.target as HTMLElement;
+      if (targetElement.id === "minimap-component" || minimapComponent.contains(targetElement)) return;
+      callback()
+      log(mutation);
+    });
+  });
+  
+  mutationObserver.observe(elementToObserve, {
+    attributes: false,
+    characterData: false,
+    childList: true,
+    subtree: true,
+    attributeOldValue: false,
+    characterDataOldValue: false,
+  });
+  return mutationObserver
+}
+
+
+function createSizeObserver(
+  elementToObserve: HTMLElement,
+  callback: CallableFunction
+): ResizeObserver {
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      console.log("Resize observed:", entry);
+    }
+    callback()
+  });
+
+  resizeObserver.observe(elementToObserve);
+  return resizeObserver
+}
