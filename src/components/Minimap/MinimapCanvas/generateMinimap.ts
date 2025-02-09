@@ -13,11 +13,15 @@ export default async function generateMinimapCanvas(
   renderOptions: Partial<Options> = {}
 ): Promise<HTMLCanvasElement> {
 
+  const rootElement = document.documentElement;
+  const rootBackgroundColor = window.getComputedStyle(rootElement).backgroundColor;
+
   const options: Partial<Options> = {
     ...renderOptions,
     scrollX: 0,
     scrollY: 0,
     scale: 0.2,
+    backgroundColor: rootBackgroundColor,
     onclone(document: Document, element: HTMLElement) {
       removeOverflowRestriction(element)
       removeAllImages(document);

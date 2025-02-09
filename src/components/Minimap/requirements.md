@@ -1,5 +1,6 @@
 Features the minimap should:
 * Take as input the element to map
+* Have the same background as the document root
 * Display an overview of the elementToMap in a canvas
 * Correctly display everything in the right scale and dimensions
 * Display which part of the elementToMap is visible to the user
