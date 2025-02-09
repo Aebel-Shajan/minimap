@@ -16,6 +16,10 @@ const treeData = {
         { name: "Grandchild 3" },
         { name: "Grandchild 4" }
       ]
+    },
+    {
+      name: "Child 3",
+      children: Array.from({ length: 30 }, (_, i) => ({ name: `Grandchild ${i + 5}` }))
     }
   ]
 };
