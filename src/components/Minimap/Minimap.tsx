@@ -4,6 +4,26 @@ import Slider from "./Slider/Slider";
 import MinimapCanvas from "./MinimapCanvas/MinimapCanvas";
 import { log } from "../../utils/utils";
 
+
+/**
+ * Minimap component that provides a visual representation of a larger element's scrollable area.
+ * 
+ * @param {Object} props - The properties object.
+ * @param {HTMLElement | null} props.elementToMap - The HTML element to map in the minimap.
+ * 
+ * @returns {JSX.Element} The rendered Minimap component.
+ * 
+ * @component
+ * 
+ * @example
+ * // Usage example:
+ * <Minimap elementToMap={document.getElementById('content')} />
+ * 
+ * @remarks
+ * This component includes a slider that can be dragged to scroll the mapped element.
+ * It also observes changes in the mapped element's children and size to queue redraws.
+ * 
+ */
 const Minimap = (
   {
     elementToMap
@@ -40,7 +60,7 @@ const Minimap = (
   useEffect(() => {
     if (!elementToMap) return
     const childObserver = createChildObserver(elementToMap, () => setQueueRedraw(true))
-    const sizeObserver = createSizeObserver(elementToMap,  () => setQueueRedraw(true))
+    const sizeObserver = createSizeObserver(elementToMap, () => setQueueRedraw(true))
     return () => {
       childObserver.disconnect();
       sizeObserver.disconnect()
@@ -65,9 +85,11 @@ const Minimap = (
     };
     const syncMinimapScroll = (event: WheelEvent) => {
       event.preventDefault(); // Prevents default scrolling behavior
-      elementToMap.scrollTop +=  event.deltaY;
+      elementToMap.scrollTop += event.deltaY;
     }
 
+    // Add event listenters to the elementToMap and minimap elements to handle scrolling
+    //  in both.
     syncScroll()
     elementToMap.addEventListener("scroll", syncScroll);
     minimap.addEventListener("wheel", syncMinimapScroll);
@@ -77,6 +99,7 @@ const Minimap = (
     };
   }, [canvasLoading, show, elementToMap])
 
+  // Update the sliderHeight when the mapScale and elementToMap is updated
   useEffect(() => {
     if (!elementToMap) return
     setSliderHeight(mapScale * elementToMap.offsetHeight)
@@ -124,22 +147,33 @@ const Minimap = (
 export default Minimap;
 
 
-// 🤨
+/**
+ * Creates a MutationObserver that observes changes to the child elements of a specified 
+ * element. When a mutation occurs, the provided callback function is executed.
+ *
+ * @param {HTMLElement} elementToObserve - The element whose child elements will be 
+ *  observed.
+ * @param {CallableFunction} callback - The function to be called when a mutation is 
+ *  observed.
+ * @returns {MutationObserver} The created MutationObserver instance.
+ * 
+ * @remarks 🤨
+ */
 function createChildObserver(
   elementToObserve: HTMLElement,
   callback: CallableFunction
 ): MutationObserver {
-  const mutationObserver = new MutationObserver(function(mutations) {
+  const mutationObserver = new MutationObserver(function (mutations) {
     const minimapComponent = document.querySelector("#minimap-component")
     if (!minimapComponent) return
-    mutations.forEach(function(mutation) {
+    mutations.forEach(function (mutation) {
       const targetElement = mutation.target as HTMLElement;
       if (targetElement.id === "minimap-component" || minimapComponent.contains(targetElement)) return;
       callback()
       log(mutation);
     });
   });
-  
+
   mutationObserver.observe(elementToObserve, {
     attributes: false,
     characterData: false,
@@ -152,6 +186,15 @@ function createChildObserver(
 }
 
 
+/**
+ * Creates a ResizeObserver to observe size changes on a given HTML element and executes
+ * a callback function when a resize is detected.
+ *
+ * @param {HTMLElement} elementToObserve - The HTML element to observe for size changes.
+ * @param {CallableFunction} callback - The callback function to execute when a resize 
+ *  is detected.
+ * @returns {ResizeObserver} The created ResizeObserver instance.
+ */
 function createSizeObserver(
   elementToObserve: HTMLElement,
   callback: CallableFunction
