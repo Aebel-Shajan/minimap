@@ -48,12 +48,6 @@ const MinimapCanvas = (
       return
     }
     const container = containerRef.current
-    const clonedElement = elementToMap.cloneNode(true) as HTMLElement
-    // Removes minimap if it is in elementToMap
-    const clonedMinimap = clonedElement.querySelector("#minimap-component")
-    if (clonedMinimap) {
-      clonedMinimap.remove()
-    }
     setCanvasLoading(true);
     (async () => {
       log("Canvas drawn")
