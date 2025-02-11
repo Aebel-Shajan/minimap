@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { log } from "../../../utils/utils";
 import styles from "./MinimapCanvas.module.css"
 import generateMinimapCanvas from "./generateMinimap";
@@ -79,4 +79,4 @@ const MinimapCanvas = (
       ref={containerRef}></div>
    );
 }
-export default memo(MinimapCanvas);
+export default MinimapCanvas;
