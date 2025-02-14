@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { log } from "../../../utils/utils";
+import { log } from "../utils";
 import styles from "./MinimapCanvas.module.css"
 import generateMinimapCanvas from "./generateMinimap";
 

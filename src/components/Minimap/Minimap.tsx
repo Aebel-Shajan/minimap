@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./Minimap.module.css"
 import Slider from "./Slider/Slider";
 import MinimapCanvas from "./MinimapCanvas/MinimapCanvas";
-import { log } from "../../utils/utils";
+import { log } from "./utils";
 
 
 /**
