@@ -9,15 +9,11 @@ import { createChildObserver, createSizeObserver, elementObserver, log } from ".
  * Minimap component that provides a visual representation of a larger element's scrollable area.
  * 
  * @param {Object} props - The properties object.
- * @param {HTMLElement | null} props.elementToMap - The HTML element to map in the minimap.
+ * @param {string} props.elementId - The id of the HTML element to map to the minimap.
  * 
  * @returns {JSX.Element} The rendered Minimap component.
  * 
  * @component
- * 
- * @example
- * // Usage example:
- * <Minimap elementToMap={document.getElementById('content')} />
  * 
  * @remarks
  * This component includes a slider that can be dragged to scroll the mapped element.
@@ -67,7 +63,7 @@ const Minimap = (
     )
 
     return () => observer.disconnect();
-  }, []);
+  }, [elementId]);
 
   // Add observers to look for changes in elementToMap and queue a redraw
   useEffect(() => {
