@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./Minimap.module.css"
 import Slider from "./Slider/Slider";
 import MinimapCanvas from "./MinimapCanvas/MinimapCanvas";
-import { log } from "./utils";
+import { elementObserver, log } from "./utils";
 
 
 /**
@@ -26,12 +26,13 @@ import { log } from "./utils";
  */
 const Minimap = (
   {
-    elementToMap
+    elementId
   }:
     {
-      elementToMap: HTMLElement | null
+      elementId: string
     }
 ) => {
+  const [elementToMap, setElementToMap] = useState<HTMLElement | null>(null);
   const [show, setShow] = useState(true)
   const [mapScale, setMapScale] = useState(1)
   const [sliderHeight, setSliderHeight] = useState(100)
@@ -55,6 +56,18 @@ const Minimap = (
 
     elementToMap.scrollTo(0, newScrollPos);
   }
+
+  // Find element from id
+  useEffect(() => {
+    setElementToMap(document.getElementById("scroll-container"))
+    const observer = elementObserver(
+      "scroll-container",
+      (id:string) => setElementToMap(document.getElementById(id)),
+      () => setElementToMap(null)
+    )
+
+    return () => observer.disconnect();
+  }, []);
 
   // Add observers to look for changes in elementToMap and queue a redraw
   useEffect(() => {
