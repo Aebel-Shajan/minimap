@@ -59,9 +59,9 @@ const Minimap = (
 
   // Find element from id
   useEffect(() => {
-    setElementToMap(document.getElementById("scroll-container"))
+    setElementToMap(document.getElementById(elementId))
     const observer = elementObserver(
-      "scroll-container",
+      elementId,
       (id:string) => setElementToMap(document.getElementById(id)),
       () => setElementToMap(null)
     )
