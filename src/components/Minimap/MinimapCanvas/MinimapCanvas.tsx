@@ -39,17 +39,18 @@ const MinimapCanvas = (
   const containerRef = useRef<HTMLDivElement>(null);
   const [checkRedraw, setCheckRedraw] = useState<boolean>(false);
   const [forceRedraw, setForceRedraw] = useState<boolean>(false);
-
   // logic to check for any queued redraws
   useEffect(() => {
     const checkPeriod = 2 * 1000
-    setInterval(() => {
+    const interval = setInterval(() => {
       setCheckRedraw((old:boolean)=> !old)
     }, checkPeriod)
+    return (() => clearInterval(interval))
   }, [])
 
   // On checkRedraw force redraw if queueRedraw=true
   useEffect(() => {
+    log("redraw checked")
     if (queueRedraw) {
       setQueueRedraw(false)
       setForceRedraw(old => !old)
@@ -59,15 +60,16 @@ const MinimapCanvas = (
 
   // Redraw the canvas if forceRedraw state changes.
   useEffect(() => {
-    if (!containerRef.current) {
+    const container = containerRef.current
+    if (!container) {
       log("container ref not rendered!")
       return 
     }
     if (!elementToMap) {
       log("elementToMap not rendered!")
+      container.innerHTML = ""
       return
     }
-    const container = containerRef.current
     setCanvasLoading(true);
 
     // Async function which draws the canvas inside the container.
