@@ -10,4 +10,5 @@ Features the minimap should:
     * minimap opened and closed
     * elementToMap is resized
     * the contents in elemenToMap have changed
+    * elementToMap is added/removed from dom
 * Limit drawing to every couple seconds instead of immediatly to reduce lag
