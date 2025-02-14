@@ -3,6 +3,7 @@ export function log(...data: unknown[]) {
   console.log(...data, "@", new Date().toLocaleTimeString())
 }
 
+
 /**
  * Observes the DOM for the addition or removal of an element with a specific ID.
  *
@@ -41,4 +42,68 @@ export function elementObserver(
   // Start observing
   observer.observe(document.body, { childList: true, subtree: true });
   return observer
+}
+
+
+/**
+ * Creates a MutationObserver that observes changes to the child elements of a specified 
+ * element. When a mutation occurs, the provided callback function is executed.
+ *
+ * @param {HTMLElement} elementToObserve - The element whose child elements will be 
+ *  observed.
+ * @param {CallableFunction} callback - The function to be called when a mutation is 
+ *  observed.
+ * @returns {MutationObserver} The created MutationObserver instance.
+ * 
+ * @remarks 🤨
+ */
+export function createChildObserver(
+  elementToObserve: HTMLElement,
+  callback: CallableFunction
+): MutationObserver {
+  const mutationObserver = new MutationObserver(function (mutations) {
+    const minimapComponent = document.querySelector("#minimap-component")
+    if (!minimapComponent) return
+    mutations.forEach(function (mutation) {
+      const targetElement = mutation.target as HTMLElement;
+      if (targetElement.id === "minimap-component" || minimapComponent.contains(targetElement)) return;
+      callback()
+      log(mutation);
+    });
+  });
+
+  mutationObserver.observe(elementToObserve, {
+    attributes: false,
+    characterData: false,
+    childList: true,
+    subtree: true,
+    attributeOldValue: false,
+    characterDataOldValue: false,
+  });
+  return mutationObserver
+}
+
+
+/**
+ * Creates a ResizeObserver to observe size changes on a given HTML element and executes
+ * a callback function when a resize is detected.
+ *
+ * @param {HTMLElement} elementToObserve - The HTML element to observe for size changes.
+ * @param {CallableFunction} callback - The callback function to execute when a resize 
+ *  is detected.
+ * @returns {ResizeObserver} The created ResizeObserver instance.
+ */
+export function createSizeObserver(
+  elementToObserve: HTMLElement,
+  callback: CallableFunction
+): ResizeObserver {
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      console.log("Resize observed:", entry);
+    }
+    callback()
+  });
+
+  resizeObserver.observe(elementToObserve);
+  return resizeObserver
 }
