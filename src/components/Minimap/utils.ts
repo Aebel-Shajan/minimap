@@ -5,15 +5,15 @@ export function log(...data: unknown[]) {
 
 
 /**
- * Observes the DOM for the addition or removal of an element with a specific ID.
+ * Observes the DOM for the addition or removal of an element with a specific selector.
  *
- * @param elementId - The ID of the element to observe.
+ * @param elementSelector - The selector of the element to observe.
  * @param onElementAdd - Callback function to be called when the element is added to the DOM.
  * @param onElementRemove - Callback function to be called when the element is removed from the DOM.
  * @returns A MutationObserver instance that is observing the DOM.
  */
 export function elementObserver(
-  elementId: string,
+  elementSelector: string,
   onElementAdd: CallableFunction,
   onElementRemove: CallableFunction
 ): MutationObserver {
@@ -22,16 +22,18 @@ export function elementObserver(
       if (mutation.type === 'childList') {
         // Check for added nodes
         mutation.addedNodes.forEach((node) => {
-          if ((node as HTMLElement).id === elementId) {
-            console.log(`Element with ID ${elementId} was added to the DOM.`);
-            onElementAdd(elementId)
+          if (!(node instanceof HTMLElement)) return 
+          if (node.matches(elementSelector)) {
+            log(`Element with selector ${elementSelector} was added to the DOM.`);
+            onElementAdd(elementSelector)
           }
         });
 
         // Check for removed nodes
         mutation.removedNodes.forEach(node => {
-          if ((node as HTMLElement).id === elementId) {
-            console.log(`Element with ID ${elementId} was removed from the DOM.`);
+          if (!(node instanceof HTMLElement)) return 
+          if (node.matches(elementSelector)) {
+            log(`Element with selector ${elementSelector} was removed from the DOM.`);
             onElementRemove()
           }
         });

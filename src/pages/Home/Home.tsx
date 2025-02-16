@@ -28,7 +28,7 @@ const Home = () => {
           {randomColors}
         </div>
       }
-      <Minimap elementId="scroll-container" />
+      <Minimap elementSelector="html" />
     </>
   );
 }
