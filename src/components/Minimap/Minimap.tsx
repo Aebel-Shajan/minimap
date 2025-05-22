@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./Minimap.module.css"
 import Slider from "./Slider/Slider";
 import MinimapCanvas from "./MinimapCanvas/MinimapCanvas";
-import { createChildObserver, createSizeObserver, elementObserver, log } from "./utils";
+import { createChildObserver, createSizeObserver, elementObserver } from "./utils";
 
 
 /**
@@ -70,11 +70,11 @@ const Minimap = (
   // Add observers to look for changes in elementToMap and queue a redraw
   useEffect(() => {
     if (!elementToMap) return
-    log("observers attached!")
+    console.log("observers attached!")
     const childObserver = createChildObserver(elementToMap, () => setQueueRedraw(true))
     const sizeObserver = createSizeObserver(elementToMap, () => setQueueRedraw(true))
     return () => {
-      log("observers disconnected!")
+      console.log("observers disconnected!")
       childObserver.disconnect();
       sizeObserver.disconnect()
     };

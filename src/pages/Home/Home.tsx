@@ -18,8 +18,6 @@ const Home = () => {
         {show ? "hide" : "show"}
       </button>
       <TestComponent />
-      <TestComponent />
-      <TestComponent />
       {show &&
         <div
           id="scroll-container"
@@ -31,7 +29,7 @@ const Home = () => {
           {randomColors}
         </div>
       }
-      <Minimap elementSelector="html" />
+      <Minimap elementSelector="#scroll-container" />
     </>
   );
 }

@@ -1,7 +1,4 @@
 
-export function log(...data: unknown[]) {
-  console.log(...data, "@", new Date().toLocaleTimeString())
-}
 
 
 /**
@@ -24,7 +21,7 @@ export function elementObserver(
         mutation.addedNodes.forEach((node) => {
           if (!(node instanceof HTMLElement)) return 
           if (node.matches(elementSelector)) {
-            log(`Element with selector ${elementSelector} was added to the DOM.`);
+            console.log(`Element with selector ${elementSelector} was added to the DOM.`);
             onElementAdd(elementSelector)
           }
         });
@@ -33,7 +30,7 @@ export function elementObserver(
         mutation.removedNodes.forEach(node => {
           if (!(node instanceof HTMLElement)) return 
           if (node.matches(elementSelector)) {
-            log(`Element with selector ${elementSelector} was removed from the DOM.`);
+            console.log(`Element with selector ${elementSelector} was removed from the DOM.`);
             onElementRemove()
           }
         });
@@ -67,26 +64,10 @@ export function createChildObserver(
     const minimapComponent = document.querySelector("#minimap-component")
     if (!minimapComponent) return
     mutations.forEach(function (mutation) {
-
-      const allElements = [mutation.target, ...mutation.addedNodes, ...mutation.removedNodes]
-      let ignoreMutaion = false
-      allElements.forEach((node) => {
-        if (node instanceof HTMLElement) {
-            log(node.closest("iframe.html2canvas-container"))
-            ignoreMutaion = true
-            return
-        }
-      })
-      if (ignoreMutaion) {
-        // If the mutation target is inside the ignored element, do nothing
-        log("ignored!")
-        return;
-    }
-
       const targetElement = mutation.target as HTMLElement;
       if (targetElement.id === "minimap-component" || minimapComponent.contains(targetElement)) return;
       callback()
-      log(mutation);
+      console.log(mutation);
     });
   });
 
