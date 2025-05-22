@@ -67,6 +67,22 @@ export function createChildObserver(
     const minimapComponent = document.querySelector("#minimap-component")
     if (!minimapComponent) return
     mutations.forEach(function (mutation) {
+
+      const allElements = [mutation.target, ...mutation.addedNodes, ...mutation.removedNodes]
+      let ignoreMutaion = false
+      allElements.forEach((node) => {
+        if (node instanceof HTMLElement) {
+            log(node.closest("iframe.html2canvas-container"))
+            ignoreMutaion = true
+            return
+        }
+      })
+      if (ignoreMutaion) {
+        // If the mutation target is inside the ignored element, do nothing
+        log("ignored!")
+        return;
+    }
+
       const targetElement = mutation.target as HTMLElement;
       if (targetElement.id === "minimap-component" || minimapComponent.contains(targetElement)) return;
       callback()

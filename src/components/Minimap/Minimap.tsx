@@ -45,11 +45,13 @@ const Minimap = (
   function handleSliderDrag(mouseY: number) {
     const minimap = minimapRef.current;
     if (!minimap || !elementToMap) return;
-
+    let viewportHeight = elementToMap.offsetHeight
+    if (elementSelector === "html") {
+      viewportHeight = window.innerHeight
+    }
     const minimapRect = minimap.getBoundingClientRect();
     const relativeMousePos = mouseY - minimapRect.top;
-    const newScrollPos = (relativeMousePos + minimap.scrollTop) / mapScale - 0.5 * elementToMap.offsetHeight;
-
+    const newScrollPos = (relativeMousePos + minimap.scrollTop) / mapScale - 0.5 * viewportHeight;
     elementToMap.scrollTo(0, newScrollPos);
   }
 
@@ -102,10 +104,18 @@ const Minimap = (
     // Add event listenters to the elementToMap and minimap elements to handle scrolling
     //  in both.
     syncScroll()
-    elementToMap.addEventListener("scroll", syncScroll);
+    if (elementSelector === "html") {
+      window.addEventListener("scroll", syncScroll);
+    } else {
+      elementToMap.addEventListener("scroll", syncScroll);
+    }
     minimap.addEventListener("wheel", syncMinimapScroll);
     return () => {
-      elementToMap.removeEventListener("scroll", syncScroll);
+      if (elementSelector === "html") {
+        window.removeEventListener("scroll", syncScroll);
+      } else {
+        elementToMap.removeEventListener("scroll", syncScroll);
+      }
       minimap.removeEventListener("wheel", syncMinimapScroll)
     };
   }, [canvasLoading, show, elementToMap])
@@ -113,7 +123,11 @@ const Minimap = (
   // Update the sliderHeight when the mapScale and elementToMap is updated
   useEffect(() => {
     if (!elementToMap) return
-    setSliderHeight(mapScale * elementToMap.offsetHeight)
+    if (elementSelector === "html") {
+      setSliderHeight(mapScale * window.innerHeight)
+    } else {
+      setSliderHeight(mapScale * elementToMap.offsetHeight)
+    }
   }, [mapScale, elementToMap])
 
 

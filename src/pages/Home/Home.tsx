@@ -17,6 +17,9 @@ const Home = () => {
       <button onClick={() => setShow(old => !old)}>
         {show ? "hide" : "show"}
       </button>
+      <TestComponent />
+      <TestComponent />
+      <TestComponent />
       {show &&
         <div
           id="scroll-container"
