@@ -55,12 +55,16 @@ const Minimap = (
     elementToMap.scrollTo(0, newScrollPos);
   }
 
+  function handleQueueRedraw() {
+    setQueueRedraw(true)
+  }
+
   // Find element from id
   useEffect(() => {
     setElementToMap(document.querySelector(elementSelector) as HTMLElement)
     const observer = elementObserver(
       elementSelector,
-      (selector:string) => setElementToMap(document.querySelector(selector) as HTMLElement),
+      (selector: string) => setElementToMap(document.querySelector(selector) as HTMLElement),
       () => setElementToMap(null)
     )
 
@@ -71,8 +75,8 @@ const Minimap = (
   useEffect(() => {
     if (!elementToMap) return
     console.log("observers attached!")
-    const childObserver = createChildObserver(elementToMap, () => setQueueRedraw(true))
-    const sizeObserver = createSizeObserver(elementToMap, () => setQueueRedraw(true))
+    const childObserver = createChildObserver(elementToMap, handleQueueRedraw)
+    const sizeObserver = createSizeObserver(elementToMap, handleQueueRedraw)
     return () => {
       console.log("observers disconnected!")
       childObserver.disconnect();
@@ -163,7 +167,7 @@ const Minimap = (
       </div>
       <div className={styles.options}>
         <button onClick={hideMinimap}>close</button>
-        <button>option</button>
+        <button onClick={handleQueueRedraw} disabled={queueRedraw}>Refresh</button>
       </div>
     </div>
   );
